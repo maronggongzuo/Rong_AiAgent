@@ -1,0 +1,31 @@
+# 核心依赖
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# AI 框架
+langchain>=0.1.0
+langchain-openai>=0.0.5
+
+# 调度器
+apscheduler>=3.10.0
+
+# HTTP 请求
+requests>=2.31.0
+httpx>=0.25.0
+
+# 文档处理
+markdown>=3.5.0
+python-multipart>=0.0.6
+
+# 数据处理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 工具库
+python-dateutil>=2.8.2
+rich>=13.0.0
+
+# 开发工具
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
