@@ -576,4 +576,144 @@ class FeishuClient:
             logger.error(f"批量查找用户异常: {e}")
         
         return result
+    
+    def get_joined_groups(self) -> List[Dict[str, Any]]:
+        """获取机器人加入的群组列表
+        
+        需要权限:
+        - im:chat
+        - im:chat.member:readonly
+        
+        Returns:
+            群组信息列表，每个群组包含 chat_id, name, avatar 等信息
+        """
+        if self.use_mock:
+            logger.info("[模拟] 获取机器人加入的群组")
+            return [
+                {
+                    "chat_id": "oc_mock_group_1",
+                    "name": "测试群组 1",
+                    "avatar": ""
+                }
+            ]
+        
+        groups = []
+        page_token = ""
+        
+        try:
+            import requests
+            
+            while True:
+                url = f"{self.BASE_URL}/im/v1/chats"
+                params = {
+                    "page_size": 100
+                }
+                if page_token:
+                    params["page_token"] = page_token
+                
+                response = requests.get(url, params=params, headers=self._get_headers())
+                result = response.json()
+                
+                if result.get("code") == 0:
+                    data = result.get("data", {})
+                    items = data.get("items", [])
+                    
+                    for item in items:
+                        groups.append({
+                            "chat_id": item.get("chat_id"),
+                            "name": item.get("name"),
+                            "avatar": item.get("avatar"),
+                            "description": item.get("description"),
+                            "owner_id": item.get("owner_id"),
+                            "member_count": item.get("member_count"),
+                            "chat_mode": item.get("chat_mode"),
+                            "chat_type": item.get("chat_type")
+                        })
+                        logger.info(f"找到群组: {item.get('name')} ({item.get('chat_id')})")
+                    
+                    page_token = data.get("page_token")
+                    if not page_token or not data.get("has_more"):
+                        break
+                else:
+                    logger.error(f"获取群组列表失败: {result}")
+                    break
+                    
+        except ImportError:
+            logger.warning("requests 库未安装")
+        except Exception as e:
+            logger.error(f"获取群组列表异常: {e}")
+        
+        return groups
+    
+    def get_group_members(self, chat_id: str) -> List[Dict[str, Any]]:
+        """获取指定群组的成员列表
+        
+        需要权限:
+        - im:chat.member:readonly
+        
+        Args:
+            chat_id: 群聊 ID (oc_xxxxx)
+            
+        Returns:
+            成员信息列表，每个成员包含 member_id, name, avatar 等信息
+        """
+        if self.use_mock:
+            logger.info(f"[模拟] 获取群组 {chat_id} 的成员")
+            return [
+                {
+                    "member_id": "ou_mock_1",
+                    "name": "用户 1",
+                    "avatar": ""
+                },
+                {
+                    "member_id": "ou_mock_2",
+                    "name": "用户 2",
+                    "avatar": ""
+                }
+            ]
+        
+        members = []
+        page_token = ""
+        
+        try:
+            import requests
+            
+            while True:
+                url = f"{self.BASE_URL}/im/v1/chats/{chat_id}/members"
+                params = {
+                    "page_size": 100
+                }
+                if page_token:
+                    params["page_token"] = page_token
+                
+                response = requests.get(url, params=params, headers=self._get_headers())
+                result = response.json()
+                
+                if result.get("code") == 0:
+                    data = result.get("data", {})
+                    items = data.get("items", [])
+                    
+                    for item in items:
+                        member = {
+                            "member_id": item.get("member_id"),
+                            "name": item.get("name"),
+                            "avatar": item.get("avatar"),
+                            "role": item.get("role")
+                        }
+                        members.append(member)
+                        logger.info(f"找到群组成员: {member['name']} ({member['member_id']})")
+                    
+                    page_token = data.get("page_token")
+                    if not page_token or not data.get("has_more"):
+                        break
+                else:
+                    logger.error(f"获取群组成员失败: {result}")
+                    break
+                    
+        except ImportError:
+            logger.warning("requests 库未安装")
+        except Exception as e:
+            logger.error(f"获取群组成员异常: {e}")
+        
+        return members
 

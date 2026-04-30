@@ -64,4 +64,11 @@ class Settings:
         self.MEEGO_NOTIFICATION_DAY_OF_WEEK = os.getenv("MEEGO_NOTIFICATION_DAY_OF_WEEK", "sat")  # 周六
         self.MEEGO_NOTIFICATION_HOUR = int(os.getenv("MEEGO_NOTIFICATION_HOUR", "20"))  # 20点
         self.MEEGO_NOTIFICATION_MINUTE = int(os.getenv("MEEGO_NOTIFICATION_MINUTE", "50"))  # 50分
+        
+        # Meego 通知接收方配置（优先级：user_id > chat_id > admin）
+        self.MEEGO_NOTIFICATION_RECIPIENT_USER_ID = os.getenv("MEEGO_NOTIFICATION_RECIPIENT_USER_ID")
+        self.MEEGO_NOTIFICATION_RECIPIENT_CHAT_ID = os.getenv("MEEGO_NOTIFICATION_RECIPIENT_CHAT_ID")
+        
+        # Meego 业务线过滤配置（可选）
+        self.MEEGO_NOTIFICATION_BUSINESS_LINE = os.getenv("MEEGO_NOTIFICATION_BUSINESS_LINE")
 

@@ -27,18 +27,33 @@ def main():
     settings = Settings()
     skill = MeegoSkill(settings)
     
+    # 获取业务线过滤配置
+    business_line = settings.MEEGO_NOTIFICATION_BUSINESS_LINE
+    if business_line:
+        print(f"📋 业务线过滤: {business_line}")
+    
     # 发送双看板通知（使用配置的参数，艾特管理员）
-    result = skill.send_dual_board_notification(mention_admin=True)
+    result = skill.send_dual_board_notification(
+        mention_admin=True,
+        business_line=business_line
+    )
     
     if result.get("success"):
         print("\n✅ 通知发送成功！")
+        
+        # 打印通知内容（验证占位符替换）
+        print("\n" + "=" * 80)
+        print("📄 通知内容")
+        print("=" * 80)
+        print(result.get("message_content", ""))
+        print("=" * 80)
     else:
         print(f"\n❌ 通知发送失败: {result.get('error')}")
         sys.exit(1)
     
     # 打印详细信息
     print("\n" + "=" * 80)
-    print("� 详细信息")
+    print("📊 详细信息")
     print("=" * 80)
     
     link_owners = result.get("link_owners", {})
